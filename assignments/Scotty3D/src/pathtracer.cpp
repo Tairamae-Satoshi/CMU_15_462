@@ -462,6 +462,13 @@ namespace CMU462 {
 					const Vector3D& w_in = w2o * dir_to_light;
 					if (w_in.z < 0) continue;
 
+					// Multiple Importance Sampling
+					float sumPr = isect.bsdf->pdf(w_out, w_in);
+					for (auto L:scene->lights)
+					{
+						int num_light_samples = L->is_delta_light() ? 1 : ns_area_light;
+						sumPr += num_light_samples * L->pdf(hit_p, dir_to_light);
+					}
 					// note that computing dot(n,w_in) is simple
 				  // in surface coordinates since the normal is (0,0,1)
 					double cos_theta = w_in.z;
@@ -476,7 +483,7 @@ namespace CMU462 {
 					shadow_ray.max_t = dist_to_light / dir_to_light.norm() - EPS_D;
 					if (!bvh->intersect(shadow_ray))
 					{
-						L_out += (cos_theta / (num_light_samples * pr)) * f * light_L;	
+						L_out += (cos_theta / sumPr) * f * light_L;	
 					}
 					
 				}
@@ -490,7 +497,7 @@ namespace CMU462 {
 		// Note that Ray objects have a depth field now; you should use this to avoid
 		// traveling down one path forever.
 		double depthP = r.depth < max_ray_depth ? 0.0 : 0.5;
-		if ((double)(rand() / RAND_MAX) < depthP)
+		if (((double)rand() / (double)RAND_MAX) < depthP)
 			return L_out;
 
 		// (1) randomly select a new ray direction (it may be
@@ -503,7 +510,7 @@ namespace CMU462 {
 		double terminateProbability = !isect.bsdf->is_delta()&& f.illum() * fabs(w_in.z) < 0.0618f ? 0.8 : 0.0;
 		
 		// (2) potentially terminate path (using Russian roulette)
-		if ((double)(std::rand() / RAND_MAX) < terminateProbability)
+		if (((double)std::rand() / (double)RAND_MAX) < terminateProbability)
 		{
 			return L_out;
 		}
@@ -511,9 +518,21 @@ namespace CMU462 {
 		// (3) evaluate weighted reflectance contribution due 
 		// to light from this direction
 		
+		// Multiple Importance Sampling 
 		Vector3D dir = o2w * w_in;
+
+		float sumPr = pdf;
+		if (!isect.bsdf->is_delta())
+		{
+			for (auto light : scene->lights)
+			{
+				int num_light_samples = light->is_delta_light() ? 1 : ns_area_light;
+				sumPr += num_light_samples * light->pdf(hit_p, dir);
+			}
+		}
+
 		Spectrum Li = trace_ray(Ray(hit_p + EPS_D * dir, dir, INF_D, r.depth + 1));
-		L_out += f * Li * (fabs(cos_theta) / (pdf * (1 - terminateProbability) * (1 - depthP)));
+		L_out += f * Li * (fabs(cos_theta) / (sumPr * (1 - terminateProbability) * (1 - depthP)));
 
 		return L_out;
 	}

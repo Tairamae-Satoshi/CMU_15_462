@@ -23,6 +23,11 @@ namespace CMU462 {
 			return radiance;
 		}
 
+		float DirectionalLight::pdf(const Vector3D& p, const Vector3D& wi)
+		{
+			return 1.0f;
+		}
+
 		// Infinite Hemisphere Light //
 
 		InfiniteHemisphereLight::InfiniteHemisphereLight(const Spectrum& rad)
@@ -42,6 +47,12 @@ namespace CMU462 {
 			return radiance;
 		}
 
+		float InfiniteHemisphereLight::pdf(const Vector3D& p, const Vector3D& wi)
+		{
+			return wi.z < 0 ? 1.0 / (2.0 * M_PI) : 0.0;
+		}
+
+
 		// Point Light //
 
 		PointLight::PointLight(const Spectrum& rad, const Vector3D& pos)
@@ -54,6 +65,11 @@ namespace CMU462 {
 			*distToLight = d.norm();
 			*pdf = 1.0;
 			return radiance;
+		}
+
+		float PointLight::pdf(const Vector3D& p, const Vector3D& wi)
+		{
+			return 1.0f;
 		}
 
 		// Spot Light //
@@ -90,6 +106,40 @@ namespace CMU462 {
 			*pdf = sqDist / (area * fabs(cosTheta));
 			return cosTheta < 0 ? radiance : Spectrum();
 		};
+
+		float AreaLight::pdf(const Vector3D& p, const Vector3D& wi) {
+			Vector3D e1 = dim_x;
+			Vector3D e2 = dim_y;
+
+			Vector3D e1_x_d = cross(e1, wi);
+			double denominator = dot(e1_x_d, e2);
+
+			if (denominator == 0)
+				return 0;
+
+			double inv_denominator = 1.0 / denominator;
+
+			Vector3D s = p - position;
+
+			Vector3D e2_x_s = cross(e2, s);
+			double r1 = dot(e2_x_s, wi);
+			double u = r1 * inv_denominator;
+			const double bound = 0.5 + EPS_D;
+			if (u < -bound || u > bound)
+				return 0;
+
+			double r2 = dot(e1_x_d, s);
+			double v = r2 * inv_denominator;
+			if (v < -bound || v > bound)
+				return 0;
+
+			Vector3D d = position + u * dim_x + v * dim_y - p;
+			double sqDist = d.norm2();
+			double cosTheta = dot(d, direction) / sqrt(sqDist);
+
+			return sqDist / (area * abs(cosTheta));
+		}
+
 
 		// Sphere Light //
 

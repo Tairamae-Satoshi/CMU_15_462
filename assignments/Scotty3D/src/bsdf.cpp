@@ -45,6 +45,10 @@ namespace CMU462 {
 		return albedo * (1.0 / PI);
 	}
 
+	float DiffuseBSDF::pdf(const Vector3D& wo, const Vector3D& wi) {
+		return wi.z / PI;
+	}
+
 	// Mirror BSDF //
 
 	Spectrum MirrorBSDF::f(const Vector3D& wo, const Vector3D& wi) {
@@ -108,10 +112,11 @@ namespace CMU462 {
 		float cosine = wo.z > 0 ? wo.z : ior * -wo.z;
 		float Fr = refract(wo, wi, ior)? schlick(cosine, ior): 1.f;
 
-		if ((double)(std::rand() / RAND_MAX) < Fr) {
+		if (((double)std::rand() / (double)RAND_MAX) < Fr) {
 			*pdf = Fr;
 			reflect(wo, wi);
 			return Fr / fabs(wi->z) * reflectance;
+
 		}
 		else{
 			*pdf = 1 - Fr;
@@ -141,8 +146,8 @@ namespace CMU462 {
 		float discriminant = 1.0 - ni_over_nt * ni_over_nt * (1 - wo.z * wo.z);
 		if (discriminant > 0)
 		{
-			wi->x = -wo.x;
-			wi->y = -wo.y;
+			wi->x = -wo.x * ni_over_nt;
+			wi->y = -wo.y * ni_over_nt;
 			wi->z = (wo.z >= 0 ? -1 : 1) * sqrt(discriminant);
 			wi->normalize();
 			return true;

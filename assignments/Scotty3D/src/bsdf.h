@@ -88,6 +88,11 @@ class BSDF {
   virtual bool is_delta() const = 0;
 
   /**
+   * Probability
+   */
+  virtual float pdf(const Vector3D& wo, const Vector3D& wi) { return 0; };
+
+  /**
    * Reflection helper
    */
   virtual void reflect(const Vector3D& wo, Vector3D* wi);
@@ -110,6 +115,7 @@ class DiffuseBSDF : public BSDF {
   Spectrum f(const Vector3D& wo, const Vector3D& wi);
   Spectrum sample_f(const Vector3D& wo, Vector3D* wi, float* pdf);
   Spectrum get_emission() const { return Spectrum(); }
+  float pdf(const Vector3D& wo, const Vector3D& wi);
   bool is_delta() const { return false; }
 
  private:
