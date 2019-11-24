@@ -37,8 +37,8 @@ This project contains my answers and implementation of all 6 assignments in [CMU
   - [x]  2 Intersecting Primitives
   - [x]  3 BVH
   - [x]  4 ShadowRays
-  - [ ]  5 Path Tracing
-  - [ ]  6 Materials
+  - [x]  5 Path Tracing
+  - [x]  6 Materials
   - [ ]  7 Environment Light
 - [ ]  Assignment 4: Animation
   - [x]  1 Spline Interpolation
