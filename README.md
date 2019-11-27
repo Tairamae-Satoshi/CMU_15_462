@@ -32,7 +32,7 @@ This project contains my answers and implementation of all 6 assignments in [CMU
   - [x]  2 Subdivision
   - [x]  3 Simplification
   - [x]  4 Isotropic Remeshing (A bug need to fix)
-- [x]  Assignment 3: PathTracer(Need to reduce noises)
+- [x]  Assignment 3: PathTracer (Need to reduce noises)
   - [x]  1 Camera Rays
   - [x]  2 Intersecting Primitives
   - [x]  3 BVH
