@@ -8,6 +8,8 @@ namespace CMU462 {
 
 		void EnvironmentLight::Init(const std::vector<double>& pMap)
 		{
+			std::vector<double> p_theta;
+			std::vector<std::vector<double>> p_phi_under_theta;
 			size_t w = envMap->w;
 			size_t h = envMap->h;
 			p_theta.resize(h);
@@ -48,7 +50,7 @@ namespace CMU462 {
 			int h = envMap->h;
 
 			auto y_iter = std::upper_bound(F_theta.begin(), F_theta.end(), uniform1);
-			int y = y_iter - p_theta.begin();
+			int y = y_iter - F_theta.begin();
 			auto x_iter = std::upper_bound(F_phi_under_theta[y].begin(), F_phi_under_theta[y].end(), uniform2);
 			int x = x_iter - F_phi_under_theta[y].begin();
 			texcX = x + dMap(engine) / w;
