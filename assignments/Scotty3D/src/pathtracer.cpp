@@ -36,7 +36,6 @@ namespace CMU462 {
 		this->ns_glsy = ns_diff;
 		this->ns_refr = ns_refr;
 
-
 		if (envmap) {
 			this->envLight = new EnvironmentLight(envmap);
 		}
@@ -407,7 +406,14 @@ namespace CMU462 {
 			// TODO (PathTracer):
 			// (Task 7) If you have an environment map, return the Spectrum this ray
 			// samples from the environment map. If you don't return black.
-			return Spectrum(0, 0, 0);
+			if (envLight)
+			{
+				return envLight->sample_dir(r);
+			}
+			else
+			{
+				return Spectrum(0, 0, 0);
+			}
 		}
 
 		// log ray hit
@@ -416,7 +422,7 @@ namespace CMU462 {
 #endif
 		Spectrum L_out = isect.bsdf->get_emission();  // Le
 
-		// TODO (PathTracer):
+		// (PathTracer):
 		// Instead of initializing this value to a constant color, use the direct,
 		// indirect lighting components calculated in the code below. The starter
 		// code overwrites L_out by (.5,.5,.5) so that you can test your geometry

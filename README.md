@@ -32,14 +32,14 @@ This project contains my answers and implementation of all 6 assignments in [CMU
   - [x]  2 Subdivision
   - [x]  3 Simplification
   - [x]  4 Isotropic Remeshing (A bug need to fix)
-- [ ]  Assignment 3: PathTracer
+- [x]  Assignment 3: PathTracer(Need to reduce noises)
   - [x]  1 Camera Rays
   - [x]  2 Intersecting Primitives
   - [x]  3 BVH
   - [x]  4 ShadowRays
   - [x]  5 Path Tracing
   - [x]  6 Materials
-  - [ ]  7 Environment Light
+  - [x]  7 Environment Light
 - [ ]  Assignment 4: Animation
   - [x]  1 Spline Interpolation
   - [x]  2 Skeleton Kinematics

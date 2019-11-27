@@ -42,9 +42,22 @@ namespace CMU462 {
 			 *   environment map horizontally? What about vertically?).
 			 */
 			Spectrum sample_dir(const Ray& r) const;
-
+			float pdf(const Vector3D& p, const Vector3D& wi);
 		private:
+
+			
+			void Init(const std::vector<double>& pTable);
+			double Sample(double uniform1, double uniform2, double& texcX, double& texcY) const;
+
+			
+			
+			std::vector<double> p_theta;
+			std::vector<std::vector<double>> p_phi_under_theta;
+			std::vector<double> F_theta;
+			std::vector<std::vector<double>> F_phi_under_theta;
+			
 			const HDRImageBuffer* envMap;
+			std::vector<double> pMap;// used for MIS
 		};  // class EnvironmentLight
 
 	}  // namespace StaticScene
